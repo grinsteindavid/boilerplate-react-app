@@ -16,6 +16,7 @@ jest.mock('./components/Footer', () => () => <footer data-testid="footer">Footer
 jest.mock('./pages/Home', () => () => <div data-testid="home-page">Home Page</div>);
 jest.mock('./pages/About', () => () => <div data-testid="about-page">About Page</div>);
 jest.mock('./pages/NotFound', () => () => <div data-testid="not-found-page">Not Found Page</div>);
+jest.mock('./pages/ContactPage', () => () => <div data-testid="contact-page">Contact Page</div>);
 
 // Mock the logger
 jest.mock('./utils/logger', () => ({
@@ -46,6 +47,6 @@ describe('App Component', () => {
     expect(screen.getByTestId('routes')).toBeInTheDocument();
     expect(screen.getByTestId('header')).toBeInTheDocument();
     expect(screen.getByTestId('footer')).toBeInTheDocument();
-    expect(screen.getAllByTestId('route').length).toBe(3); // Home, About, NotFound routes
+    expect(screen.getAllByTestId('route').length).toBe(4); // Home, About, Contact, NotFound routes
   });
 });

@@ -8,10 +8,23 @@ import logger from '../utils/logger';
  */
 const ContactPage = () => {
   logger.debug('Rendering ContactPage');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formData = {
+      name: event.target.elements.name.value,
+      email: event.target.elements.email.value,
+      message: event.target.elements.message.value,
+    };
+    logger.info('Contact form submitted', formData);
+    // In a real application, you would send this data to a backend service
+    alert('Thank you for your message!');
+  };
+
   return (
     <div className="contact-page">
       <h1>Contact Us</h1>
-      <form data-testid="contact-form">
+      <form data-testid="contact-form" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">Name:</label>
           <input type="text" id="name" name="name" />
@@ -30,8 +43,6 @@ const ContactPage = () => {
   );
 };
 
-ContactPage.propTypes = {};
 
-ContactPage.defaultProps = {};
 
 export default ContactPage;
