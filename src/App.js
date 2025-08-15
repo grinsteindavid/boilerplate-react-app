@@ -4,6 +4,7 @@ import './App.css';
 import Home from './pages/Home';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
+import ContactPage from './pages/ContactPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ContactPage from './components/ContactPage';
