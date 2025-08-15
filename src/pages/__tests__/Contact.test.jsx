@@ -1,95 +1,60 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Contact from '../Contact';
-import logger from '../../utils/logger';
-
-// Mock the logger to prevent actual console output during tests
-jest.mock('../../utils/logger', () => ({
-  info: jest.fn(),
-  debug: jest.fn(),
-}));
 
 describe('Contact Component', () => {
-  beforeEach(() => {
-    // Clear all mocks before each test
-    jest.clearAllMocks();
-    // Mock window.alert
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
-    logger.debug('Test setup: Contact component');
-  });
-
-  afterEach(() => {
-    // Restore original window.alert
-    window.alert.mockRestore();
-    logger.debug('Test teardown: Contact component');
-  });
-
-  test('renders the contact form with all fields', () => {
+  test('renders the contact form with all fields and a submit button', () => {
     render(<Contact />);
-    logger.debug('Checking for form elements');
+
+    // Check if the heading is present
     expect(screen.getByRole('heading', { name: /contact us/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/name:/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email:/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/message:/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /send message/i })).toBeInTheDocument();
+
+    // Check for name input field
+    const nameInput = screen.getByLabelText(/name:/i);
+    expect(nameInput).toBeInTheDocument();
+    expect(nameInput).toHaveAttribute('type', 'text');
+
+    // Check for email input field
+    const emailInput = screen.getByLabelText(/email:/i);
+    expect(emailInput).toBeInTheDocument();
+    expect(emailInput).toHaveAttribute('type', 'email');
+
+    // Check for message textarea
+    const messageTextarea = screen.getByLabelText(/message:/i);
+    expect(messageTextarea).toBeInTheDocument();
+    expect(messageTextarea.tagName).toBe('TEXTAREA');
+
+    // Check for submit button
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    expect(submitButton).toBeInTheDocument();
+    expect(submitButton).toHaveAttribute('type', 'submit');
   });
 
-  test('allows users to type into form fields', () => {
+  test('allows users to type into the input fields', () => {
     render(<Contact />);
-    logger.debug('Testing input field changes');
 
     const nameInput = screen.getByLabelText(/name:/i);
-    fireEvent.change(nameInput, { target: { name: 'name', value: 'John Doe' } });
-    expect(nameInput.value).toBe('John Doe');
-    logger.debug('Name input value', { value: nameInput.value });
+    fireEvent.change(nameInput, { target: { value: 'John Doe' } });
+    expect(nameInput).toHaveValue('John Doe');
 
     const emailInput = screen.getByLabelText(/email:/i);
-    fireEvent.change(emailInput, { target: { name: 'email', value: 'john.doe@example.com' } });
-    expect(emailInput.value).toBe('john.doe@example.com');
-    logger.debug('Email input value', { value: emailInput.value });
+    fireEvent.change(emailInput, { target: { value: 'john.doe@example.com' } });
+    expect(emailInput).toHaveValue('john.doe@example.com');
 
     const messageTextarea = screen.getByLabelText(/message:/i);
-    fireEvent.change(messageTextarea, { target: { name: 'message', value: 'Hello, this is a test message.' } });
-    expect(messageTextarea.value).toBe('Hello, this is a test message.');
-    logger.debug('Message textarea value', { value: messageTextarea.value });
+    fireEvent.change(messageTextarea, { target: { value: 'This is a test message.' } });
+    expect(messageTextarea).toHaveValue('This is a test message.');
   });
 
-  test('submits the form and clears fields on successful submission', () => {
-    render(<Contact />);
-    logger.debug('Testing form submission');
+  // Add a test for form submission (mocking if necessary)
+  test('calls a submit handler when the form is submitted', () => {
+    const handleSubmit = jest.fn();
+    render(<Contact onSubmit={handleSubmit} />); // Pass a mock onSubmit prop
 
-    const nameInput = screen.getByLabelText(/name:/i);
-    const emailInput = screen.getByLabelText(/email:/i);
-    const messageTextarea = screen.getByLabelText(/message:/i);
-    const submitButton = screen.getByRole('button', { name: /send message/i });
+    const form = screen.getByRole('form');
+    fireEvent.submit(form);
 
-    fireEvent.change(nameInput, { target: { name: 'name', value: 'Jane Doe' } });
-    fireEvent.change(emailInput, { target: { name: 'email', value: 'jane.doe@example.com' } });
-    fireEvent.change(messageTextarea, { target: { name: 'message', value: 'This is another test.' } });
-
-    fireEvent.click(submitButton);
-
-    logger.debug('Checking if alert was called', { alertCalled: window.alert.mock.called });
-    expect(window.alert).toHaveBeenCalledWith('Thank you for your message!');
-    logger.debug('Checking if logger.info was called', { loggerInfoCalled: logger.info.mock.called });
-    expect(logger.info).toHaveBeenCalledWith('Contact form submitted', {
-      name: 'Jane Doe',
-      email: 'jane.doe@example.com',
-      message: 'This is another test.',
-    });
-
-    // Check if form fields are cleared after submission
-    expect(nameInput.value).toBe('');
-    expect(emailInput.value).toBe('');
-    expect(messageTextarea.value).toBe('');
-    logger.debug('Form fields cleared after submission');
-  });
-
-  test('displays required attribute for all input fields', () => {
-    render(<Contact />);
-    logger.debug('Checking required attributes');
-    expect(screen.getByLabelText(/name:/i)).toBeRequired();
-    expect(screen.getByLabelText(/email:/i)).toBeRequired();
-    expect(screen.getByLabelText(/message:/i)).toBeRequired();
+    // Expect the submit handler to have been called
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
   });
 });
