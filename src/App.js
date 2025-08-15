@@ -4,6 +4,7 @@ import './App.css';
 import Home from './pages/Home';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
+import ContactUs from './pages/ContactUs';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import logger from './utils/logger';
@@ -23,6 +24,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<ContactUs />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
@@ -33,3 +35,4 @@ function App() {
 }
 
 export default App;
+// Temporary change for PR creation
