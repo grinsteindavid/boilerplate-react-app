@@ -46,6 +46,6 @@ describe('App Component', () => {
     expect(screen.getByTestId('routes')).toBeInTheDocument();
     expect(screen.getByTestId('header')).toBeInTheDocument();
     expect(screen.getByTestId('footer')).toBeInTheDocument();
-    expect(screen.getAllByTestId('route').length).toBe(4); // Home, About, Blog, NotFound routes
+    expect(screen.getAllByTestId('route').length).toBe(5); // Home, About, Blog, BlogPost, NotFound routes
   });
 });

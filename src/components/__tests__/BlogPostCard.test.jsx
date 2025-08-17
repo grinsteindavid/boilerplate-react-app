@@ -16,37 +16,42 @@ describe('BlogPostCard', () => {
     id: 'test-post',
     title: 'Test Post Title',
     author: 'Test Author',
-    date: 'January 1, 2025',
+    date: 'January 1, 2024',
     excerpt: 'This is a short excerpt for the test post.',
-    content: 'Full content of the test post.',
   };
 
   beforeEach(() => {
-    // Clear mock calls before each test
-    logger.debug.mockClear();
+    logger.debug('BlogPostCard test setup: Rendering component');
+    render(<BlogPostCard post={mockPost} />);
   });
 
-  test('renders correctly with all post details', () => {
-    logger.debug('Running test: renders correctly with all post details');
-    render(<BlogPostCard post={mockPost} />);
+  afterEach(() => {
+    logger.debug('BlogPostCard test cleanup: Clearing mocks');
+    jest.clearAllMocks();
+  });
 
+  test('renders post title, author, date, and excerpt', () => {
+    logger.debug('Checking for title, author, date, excerpt');
     expect(screen.getByText(mockPost.title)).toBeInTheDocument();
-    expect(screen.getByText(`By ${mockPost.author} on ${mockPost.date}`)).toBeInTheDocument();
-    expect(screen.getByText(mockPost.excerpt)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /read more/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /read more/i })).toHaveAttribute('href', `/blog/${mockPost.id}`);
-
-    // Verify logger.debug was called
-    expect(logger.debug).toHaveBeenCalledWith('Rendering BlogPostCard', {
-      postId: mockPost.id,
-      postTitle: mockPost.title,
+    const authorDateElement = screen.getByText((content, element) => {
+      return element.tagName.toLowerCase() === 'p' && element.textContent.includes(`By ${mockPost.author}`) && element.textContent.includes(`on ${mockPost.date}`);
     });
+    expect(authorDateElement).toBeInTheDocument();
+    expect(screen.getByText(mockPost.excerpt)).toBeInTheDocument();
   });
 
-  test('link points to the correct conceptual route', () => {
-    logger.debug('Running test: link points to the correct conceptual route');
-    render(<BlogPostCard post={mockPost} />);
+  test('renders a "Read More" link with correct href', () => {
+    logger.debug('Checking for "Read More" link');
     const readMoreLink = screen.getByRole('link', { name: /read more/i });
+    expect(readMoreLink).toBeInTheDocument();
     expect(readMoreLink).toHaveAttribute('href', `/blog/${mockPost.id}`);
+  });
+
+  test('logs debug message on render', () => {
+    logger.debug('Verifying logger.debug call');
+    expect(logger.debug).toHaveBeenCalledWith(
+      'Rendering BlogPostCard',
+      { postId: mockPost.id, postTitle: mockPost.title }
+    );
   });
 });
