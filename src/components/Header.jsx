@@ -23,6 +23,9 @@ const Header = ({ title = 'React App' }) => {
             <li>
               <Link to="/about">About</Link>
             </li>
+            <li>
+              <Link to="/blog">Blog</Link>
+            </li>
           </ul>
         </nav>
       </div>
