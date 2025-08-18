@@ -1,27 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import logger from '../utils/logger';
 
 /**
- * BlogPostCard - Displays a preview of a blog post.
+ * BlogPostCard component - Displays a preview of a single blog post.
  * @param {Object} props - Component props.
  * @param {Object} props.post - The blog post object containing title, author, date, excerpt, and id.
- * @returns {React.Element} Rendered blog post card.
+ * @returns {React.Element} The rendered BlogPostCard.
  */
 const BlogPostCard = ({ post }) => {
-  logger.debug('Rendering BlogPostCard', { postId: post.id, postTitle: post.title });
+  logger.debug('Rendering BlogPostCard', { postId: post.id });
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">{post.title}</h2>
-      <p className="text-gray-600 text-sm mb-2">
-        By <span className="font-semibold">{post.author}</span> on {post.date}
-      </p>
-      <p className="text-gray-700 leading-relaxed mb-4">{post.excerpt}</p>
-      {/* Conceptual link to the full article */}
-      <a href={`/blog/${post.id}`} className="text-blue-600 hover:underline font-medium">
-        Read More
-      </a>
+    <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full">
+      <div className="p-6 flex flex-col justify-between flex-grow">
+        <div>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2 leading-tight">
+            {post.title}
+          </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            By {post.author} on {post.date}
+          </p>
+          <p className="text-gray-700 text-base mb-4 flex-grow">
+            {post.excerpt}
+          </p>
+        </div>
+        <div className="mt-4">
+          <Link
+            to={`/blog/${post.id}`}
+            className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+          >
+            Read More
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };
@@ -33,6 +46,7 @@ BlogPostCard.propTypes = {
     author: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     excerpt: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
   }).isRequired,
 };
 

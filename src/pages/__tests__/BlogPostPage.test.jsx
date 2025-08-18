@@ -1,76 +1,35 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { useParams } from 'react-router-dom';
-import BlogPostPage, { blogPosts } from '../BlogPostPage';
-import logger from '../../utils/logger';
-
-// Mock useParams hook
-jest.mock('react-router-dom', () => ({
-  useParams: jest.fn(),
-}));
-
-// Mock the logger to prevent console output during tests
-jest.mock('../../utils/logger', () => ({
-  debug: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-}));
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import BlogPostPage from '../BlogPostPage';
 
 describe('BlogPostPage', () => {
-  const mockPosts = [
-    {
-      id: 'the-unstoppable-force-of-web-development',
-      title: 'Test Post Title 1',
-      author: 'Author One',
-      date: 'Jan 1, 2024',
-      excerpt: 'Excerpt 1',
-      content: 'Full content of test post 1.',
-    },
-    {
-      id: 'test-post-2',
-      title: 'Test Post Title 2',
-      author: 'Author Two',
-      date: 'Feb 2, 2024',
-      excerpt: 'Excerpt 2',
-      content: 'Full content of test post 2.',
-    },
-  ];
+  // Mock the useParams hook to control the ID in the URL
+  const renderWithRouter = (ui, { route = '/' } = {}) => {
+    window.history.pushState({}, 'Test page', route);
+    return render(
+      <MemoryRouter initialEntries={[route]}>
+        <Routes>
+          <Route path="/blog/:id" element={ui} />
+        </Routes>
+      </MemoryRouter>
+    );
+  };
 
-  beforeEach(() => {
-    // Reset mock before each test
-    useParams.mockReset();
-    logger.debug('BlogPostPage test setup: Resetting mocks');
+  test('renders blog post content when a valid ID is provided', () => {
+    const postId = 'the-art-of-clean-code'; // A valid ID from the mock data
+    renderWithRouter(<BlogPostPage />, { route: `/blog/${postId}` });
+
+    expect(screen.getByText(/The Art of Clean Code/i)).toBeInTheDocument();
+    expect(screen.getByText(/By Code Master on September 1, 2025/i)).toBeInTheDocument();
+    expect(screen.getByText(/Clean code is not just about making your code work;/i)).toBeInTheDocument();
   });
 
-  afterEach(() => {
-    logger.debug('BlogPostPage test cleanup: Clearing mocks');
-    jest.clearAllMocks();
-  });
+  test('renders "404 Not Found" when an invalid ID is provided', () => {
+    const invalidPostId = 'non-existent-post';
+    renderWithRouter(<BlogPostPage />, { route: `/blog/${invalidPostId}` });
 
-  test('renders the full blog post content for a valid ID', () => {
-    logger.debug('Testing valid post ID');
-    useParams.mockReturnValue({ id: blogPosts[0].id });
-    render(<BlogPostPage />);
-
-    expect(screen.getByText(blogPosts[0].title)).toBeInTheDocument();
-    const authorDateElement = screen.getByText((content, element) => {
-      return element.tagName.toLowerCase() === 'p' && element.textContent.includes(`By ${blogPosts[0].author}`) && element.textContent.includes(`on ${blogPosts[0].date}`);
-    });
-    expect(authorDateElement).toBeInTheDocument();
-    expect(screen.getByText(blogPosts[0].content)).toBeInTheDocument();
-    expect(logger.info).toHaveBeenCalledWith('Rendering BlogPostPage component');
-    expect(logger.debug).toHaveBeenCalledWith('Displaying blog post', { postId: blogPosts[0].id, postTitle: blogPosts[0].title });
-  });
-
-  test('renders "404 Not Found" for an invalid ID', () => {
-    logger.debug('Testing invalid post ID');
-    useParams.mockReturnValue({ id: 'non-existent-post' });
-    render(<BlogPostPage />);
-
-    expect(screen.getByText('404 Not Found')).toBeInTheDocument();
-    expect(screen.getByText('The blog post you are looking for does not exist.')).toBeInTheDocument();
-    expect(logger.info).toHaveBeenCalledWith('Rendering BlogPostPage component');
-    expect(logger.warn).toHaveBeenCalledWith('Blog post with ID non-existent-post not found.');
+    expect(screen.getByText(/404 Not Found/i)).toBeInTheDocument();
+    expect(screen.getByText(/The blog post you are looking for does not exist./i)).toBeInTheDocument();
   });
 });

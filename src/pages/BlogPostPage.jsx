@@ -2,84 +2,95 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import logger from '../utils/logger';
 
-// Re-declaring blogPosts here for BlogPostPage as per requirements.
-// In a real app, this would likely be a shared data source or API call.
-export const blogPosts = [
+/**
+ * Static blog post data (same as in BlogPage.jsx).
+ * In a real application, this would be fetched from an API or CMS.
+ */
+const blogPosts = [
   {
     id: 'the-unstoppable-force-of-web-development',
     title: 'The Unstoppable Force of Web Development',
     author: 'A.I. Assistant',
     date: 'August 16, 2025',
-    excerpt: 'A deep dive into the latest trends shaping the future of front-end development...', 
-    content: 'This is the *full content* of the first blog post. It would contain a lot more detailed information, images, and possibly code snippets. This section demonstrates the ability to display a complete article.'
+    excerpt: 'A deep dive into the latest trends shaping the future of front-end development...',
+    content: `
+      <p>This is the full content of the first blog post. It covers various aspects of modern web development, including new frameworks, tools, and best practices.</p>
+      <p>The web development landscape is constantly evolving, with new technologies emerging at a rapid pace. Staying updated with these changes is crucial for any developer.</p>
+      <p>Key areas of focus include performance optimization, accessibility, and user experience. Building fast, inclusive, and intuitive web applications is paramount.</p>
+    `,
+  },
+  {
+    id: 'the-art-of-clean-code',
+    title: 'The Art of Clean Code',
+    author: 'Code Master',
+    date: 'September 1, 2025',
+    excerpt: 'Exploring principles and practices for writing maintainable and readable code...',
+    content: `
+      <p>Clean code is not just about making your code work; it's about making it understandable and maintainable for others and your future self.</p>
+      <p>Adhering to principles like DRY (Don't Repeat Yourself), KISS (Keep It Simple, Stupid), and YAGNI (You Aren't Gonna Need It) can significantly improve code quality.</p>
+      <p>Regular refactoring, meaningful variable names, and clear function responsibilities are hallmarks of clean code.</p>
+    `,
   },
   {
     id: 'mastering-react-hooks',
-    title: 'Mastering React Hooks: A Comprehensive Guide',
-    author: 'Dev Guru',
-    date: 'July 20, 2025',
-    excerpt: 'Unlock the power of functional components with this in-depth guide to React Hooks...', 
-    content: 'This is the *full content* of the second blog post. It covers advanced topics in React Hooks, including custom hooks, performance optimizations, and common pitfalls. Imagine detailed explanations and examples here.'
+    title: 'Mastering React Hooks',
+    author: 'React Enthusiast',
+    date: 'September 15, 2025',
+    excerpt: 'A comprehensive guide to leveraging React Hooks for better state management and side effects...',
+    content: `
+      <p>React Hooks revolutionized how we write React components, enabling functional components to manage state and side effects.</p>
+      <p>Understanding useState, useEffect, useContext, and custom hooks is fundamental for modern React development.</p>
+      <p>Hooks promote cleaner, more reusable code and simplify complex component logic, leading to more robust applications.</p>
+    `,
   },
   {
-    id: 'css-in-js-demystified',
-    title: 'CSS-in-JS Demystified: Styling React Components',
-    author: 'Style Master',
-    date: 'June 5, 2025',
-    excerpt: 'Explore the various approaches to styling React applications using CSS-in-JS libraries...', 
-    content: 'This is the *full content* of the third blog post. It delves into the pros and cons of various CSS-in-JS libraries like Styled Components, Emotion, and JSS, providing practical examples for each.'
-  },
-  {
-    id: 'state-management-patterns',
-    title: 'State Management Patterns in Modern React',
-    author: 'Data Flow Expert',
-    date: 'May 12, 2025',
-    excerpt: 'A comparison of popular state management solutions like Redux, Context API, and Zustand...', 
-    content: 'This is the *full content* of the fourth blog post. It offers a comparative analysis of different state management patterns, helping developers choose the right solution for their React applications based on complexity and scale.'
-  },
-  {
-    id: 'optimizing-react-performance',
-    title: 'Optimizing React Performance: Tips and Tricks',
-    author: 'Performance Wiz',
-    date: 'April 1, 2025',
-    excerpt: 'Learn how to identify and eliminate performance bottlenecks in your React applications...', 
-    content: 'This is the *full content* of the fifth blog post. It provides actionable tips and tricks for optimizing the performance of React applications, covering topics like memoization, lazy loading, and virtualized lists.'
+    id: 'css-in-depth-flexbox-and-grid',
+    title: 'CSS In-Depth: Flexbox and Grid',
+    author: 'Style Guru',
+    date: 'October 1, 2025',
+    excerpt: 'Unlocking the power of modern CSS layout techniques for responsive designs...',
+    content: `
+      <p>Flexbox and CSS Grid are powerful layout modules that have transformed front-end development, making responsive design much more manageable.</p>
+      <p>Flexbox is ideal for one-dimensional layouts (rows or columns), while Grid excels at two-dimensional layouts, providing precise control over rows and columns.</p>
+      <p>Combining these two techniques allows for highly flexible and complex layouts that adapt seamlessly to different screen sizes.</p>
+    `,
   },
 ];
 
 /**
- * BlogPostPage - Displays the full content of a single blog post.
- * It retrieves the post ID from the URL and displays the corresponding article or a 404 message.
- * @returns {React.Element} Rendered blog post page.
+ * BlogPostPage component - Displays the full content of a single blog post.
+ * It retrieves the post ID from the URL parameters and finds the corresponding post.
+ * Displays a "404 Not Found" message if the post is not found.
+ * @returns {React.Element} The rendered BlogPostPage.
  */
 const BlogPostPage = () => {
-  logger.info('Rendering BlogPostPage component');
   const { id } = useParams();
+  logger.info('Rendering BlogPostPage component', { postId: id });
 
   const post = blogPosts.find((p) => p.id === id);
 
   if (!post) {
-    logger.warn(`Blog post with ID ${id} not found.`);
+    logger.warn('Blog post not found', { postId: id });
     return (
-      <div className="container mx-auto px-4 py-8 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">404 Not Found</h1>
-        <p className="text-xl text-gray-700">The blog post you are looking for does not exist.</p>
+      <div className="container mx-auto p-4 text-center">
+        <h1 className="text-4xl font-bold text-gray-800 my-8">404 Not Found</h1>
+        <p className="text-lg text-gray-600">The blog post you are looking for does not exist.</p>
       </div>
     );
   }
 
-  logger.debug('Displaying blog post', { postId: post.id, postTitle: post.title });
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
-      <p className="text-gray-600 text-sm mb-4">
-        By <span className="font-semibold">{post.author}</span> on {post.date}
+    <div className="container mx-auto p-4">
+      <h1 className="text-4xl font-bold text-gray-800 my-8 leading-tight">
+        {post.title}
+      </h1>
+      <p className="text-sm text-gray-600 mb-6">
+        By {post.author} on {post.date}
       </p>
-      <div className="prose lg:prose-xl max-w-none leading-relaxed text-gray-800">
-        {/* In a real application, content might be parsed from Markdown/HTML */}
-        <p>{post.content}</p>
-      </div>
+      <div
+        className="prose lg:prose-xl max-w-none text-gray-700 leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
     </div>
   );
 };

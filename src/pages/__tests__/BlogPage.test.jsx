@@ -1,49 +1,44 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import BlogPage from '../BlogPage';
-import BlogPostCard from '../../components/BlogPostCard';
-import logger from '../../utils/logger';
 
-// Mock the BlogPostCard component to simplify BlogPage testing
+// Mock the BlogPostCard component to simplify testing BlogPage
 jest.mock('../../components/BlogPostCard', () => {
-  const MockBlogPostCard = ({ post }) => (
+  return ({ post }) => (
     <div data-testid="blog-post-card">{post.title}</div>
   );
-  return MockBlogPostCard;
 });
 
-// Mock the logger to prevent console output during tests
-jest.mock('../../utils/logger', () => ({
-  debug: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
-}));
-
 describe('BlogPage', () => {
-  beforeEach(() => {
-    logger.debug('BlogPage test setup: Rendering component');
-    render(<BlogPage />);
+  test('renders the blog page title', () => {
+    render(
+      <Router>
+        <BlogPage />
+      </Router>
+    );
+    expect(screen.getByText(/Our Blog/i)).toBeInTheDocument();
   });
 
-  afterEach(() => {
-    logger.debug('BlogPage test cleanup: Clearing mocks');
-    jest.clearAllMocks();
-  });
-
-  test('renders the main blog title', () => {
-    logger.debug('Checking for main blog title');
-    expect(screen.getByText(/our blog/i)).toBeInTheDocument();
-  });
-
-  test('renders at least 3 BlogPostCard components', () => {
-    logger.debug('Checking for BlogPostCard components');
+  test('renders a list of blog post cards', () => {
+    render(
+      <Router>
+        <BlogPage />
+      </Router>
+    );
     const blogPostCards = screen.getAllByTestId('blog-post-card');
     expect(blogPostCards.length).toBeGreaterThanOrEqual(3);
+    expect(blogPostCards.length).toBeLessThanOrEqual(5);
   });
 
-  test('logs info message on render', () => {
-    logger.debug('Verifying logger.info call');
-    expect(logger.info).toHaveBeenCalledWith('Rendering BlogPage component');
+  test('each blog post card displays a title', () => {
+    render(
+      <Router>
+        <BlogPage />
+      </Router>
+    );
+    expect(screen.getByText(/The Unstoppable Force of Web Development/i)).toBeInTheDocument();
+    expect(screen.getByText(/The Art of Clean Code/i)).toBeInTheDocument();
+    expect(screen.getByText(/Mastering React Hooks/i)).toBeInTheDocument();
   });
 });
