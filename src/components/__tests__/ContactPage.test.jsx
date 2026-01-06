@@ -1,26 +1,20 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { render } from '@testing-library/react';
 import ContactPage from '../ContactPage';
 
 describe('ContactPage', () => {
-  test('renders contact page title', () => {
-    render(
-      <MemoryRouter>
-        <ContactPage />
-      </MemoryRouter>
-    );
-    const titleElement = screen.getByText(/Contact Us/i);
-    expect(titleElement).toBeInTheDocument();
+  test('renders without crashing', () => {
+    const { getByText } = render(<ContactPage />);
+    expect(getByText(/Contact Us/i)).toBeInTheDocument();
   });
 
-  test('renders ContactForm component', () => {
-    render(
-      <MemoryRouter>
-        <ContactPage />
-      </MemoryRouter>
-    );
-    const formElement = screen.getByRole('form');
-    expect(formElement).toBeInTheDocument();
+  test('includes the ContactForm component', () => {
+    const { getByTestId } = render(<ContactPage />);
+    expect(getByTestId('contact-form')).toBeInTheDocument();
+  });
+
+  test('displays the correct page title', () => {
+    const { getByRole } = render(<ContactPage />);
+    expect(getByRole('heading', { name: /Contact Us/i })).toBeInTheDocument();
   });
 });
