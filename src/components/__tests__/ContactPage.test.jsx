@@ -3,13 +3,18 @@ import { render, screen } from '@testing-library/react';
 import ContactPage from '../ContactPage';
 
 describe('ContactPage', () => {
-  test('renders the ContactPage without crashing', () => {
+  test('renders without crashing', () => {
     render(<ContactPage />);
-    expect(screen.getByText(/contact us/i)).toBeInTheDocument(); // Assuming there's a heading
+    expect(screen.getByText(/contact us/i)).toBeInTheDocument();
   });
 
   test('includes the ContactForm component', () => {
     render(<ContactPage />);
-    expect(screen.getByLabelText(/name/i)).toBeInTheDocument(); // Check for a field from ContactForm
+    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+  });
+
+  test('displays the correct page title', () => {
+    render(<ContactPage />);
+    expect(screen.getByRole('heading', { name: /contact us/i })).toBeInTheDocument();
   });
 });

@@ -6,29 +6,30 @@ const ContactForm = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
+  const [success, setSuccess] = useState(false);
 
-  const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const validate = () => {
     const newErrors = {};
     if (!name) newErrors.name = 'Name is required';
     if (!email) newErrors.email = 'Email is required';
-    if (!validateEmail(email)) newErrors.email = 'Invalid email format';
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
     if (!message) newErrors.message = 'Message is required';
+    return newErrors;
+  };
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
-
-    // Simulate form submission
-    setSuccessMessage('Form submitted successfully');
+    // Simulate a successful submission
+    setSuccess(true);
+    setErrors({});
     setName('');
     setEmail('');
     setMessage('');
-    setErrors({});
   };
 
   return (
@@ -63,7 +64,7 @@ const ContactForm = () => {
         {errors.message && <p>{errors.message}</p>}
       </div>
       <button type="submit">Submit</button>
-      {successMessage && <p>{successMessage}</p>}
+      {success && <p>Thank you for your message!</p>}
     </form>
   );
 };
