@@ -2,15 +2,19 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 const ContactForm = ({ onSubmit }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const validate = () => {
     const newErrors = {};
-    if (!name) newErrors.name = 'Name is required';
-    if (!email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
+    if (!formData.name) newErrors.name = 'Name is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    if (!formData.message) newErrors.message = 'Message is required';
     return newErrors;
   };
 
@@ -21,9 +25,8 @@ const ContactForm = ({ onSubmit }) => {
       setErrors(validationErrors);
     } else {
       setErrors({});
-      onSubmit({ name, email });
-      setName('');
-      setEmail('');
+      onSubmit(formData);
+      setFormData({ name: '', email: '', message: '' }); // Reset form
     }
   };
 
@@ -32,22 +35,34 @@ const ContactForm = ({ onSubmit }) => {
       <div>
         <label htmlFor="name">Name</label>
         <input
-          id="name"
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
         />
         {errors.name && <p>{errors.name}</p>}
       </div>
       <div>
         <label htmlFor="email">Email</label>
         <input
-          id="email"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
         />
         {errors.email && <p>{errors.email}</p>}
+      </div>
+      <div>
+        <label htmlFor="message">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          value={formData.message}
+          onChange={handleChange}
+        />
+        {errors.message && <p>{errors.message}</p>}
       </div>
       <button type="submit">Submit</button>
     </form>
@@ -55,11 +70,7 @@ const ContactForm = ({ onSubmit }) => {
 };
 
 ContactForm.propTypes = {
-  onSubmit: PropTypes.func,
-};
-
-ContactForm.defaultProps = {
-  onSubmit: () => {},
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default ContactForm;
