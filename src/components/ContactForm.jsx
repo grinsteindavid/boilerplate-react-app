@@ -6,26 +6,29 @@ const ContactForm = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const validate = () => {
-    const newErrors = {};
-    if (!name) newErrors.name = 'Name is required';
-    if (!email) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
-    if (!message) newErrors.message = 'Message is required';
-    return newErrors;
-  };
+  const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      setErrors({});
-      // Simulate form submission
-      alert('Thank you for your message!');
+    const newErrors = {};
+    if (!name) newErrors.name = 'Name is required';
+    if (!email) newErrors.email = 'Email is required';
+    if (!validateEmail(email)) newErrors.email = 'Invalid email format';
+    if (!message) newErrors.message = 'Message is required';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
     }
+
+    // Simulate form submission
+    setSuccessMessage('Form submitted successfully');
+    setName('');
+    setEmail('');
+    setMessage('');
+    setErrors({});
   };
 
   return (
@@ -60,12 +63,13 @@ const ContactForm = () => {
         {errors.message && <p>{errors.message}</p>}
       </div>
       <button type="submit">Submit</button>
+      {successMessage && <p>{successMessage}</p>}
     </form>
   );
 };
 
 ContactForm.propTypes = {
-  // Define prop types if needed
+  // Define any props if needed
 };
 
 export default ContactForm;

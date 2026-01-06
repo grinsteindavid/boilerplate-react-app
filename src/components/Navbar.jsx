@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav>
       <ul>
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/contact">Contact</Link></li>
+        <li><Link to="/contact">Contact</Link></li> {/* New link to Contact Page */}
       </ul>
     </nav>
   );
