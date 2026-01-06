@@ -7,9 +7,15 @@ describe('ContactPage', () => {
     render(<ContactPage />);
   });
 
-  test('includes ContactForm component', () => {
+  test('includes the ContactForm component', () => {
     const { getByTestId } = render(<ContactPage />);
     const contactForm = getByTestId('contact-form');
     expect(contactForm).toBeInTheDocument();
+  });
+
+  test('has the correct page title', () => {
+    const { getByText } = render(<ContactPage />);
+    const title = getByText(/Contact Us/i);
+    expect(title).toBeInTheDocument();
   });
 });
